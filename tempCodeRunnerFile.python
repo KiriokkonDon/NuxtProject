@@ -1,0 +1,125 @@
+import numpy as np
+import math
+import time
+
+class RichardsonMethod:
+    def __init__(self, A, b):
+        self.a_mtx = A
+        self.b_vec = b
+        self.size = A.shape[0]
+        self.iter_max = 10000
+        self.eps = 1e-9
+    
+    def aat_(self):
+        A = self.a_mtx
+        m = np.zeros((self.size, self.size))
+        for i in range(A.shape[0]):
+            for j in range(i, A.shape[1]):
+                m[j, i] = m[i, j] = np.dot(A[i], A[j])
+        return m
+    
+    def error(self, x):
+        return np.dot(self.a_mtx, x) - self.b_vec
+    
+    def errorNorm(self, x):
+        return np.linalg.norm(self.error(x))
+    
+    def maxNotDiag(self, a_mtx):
+        mx, my = 0, 1
+        for x in range(a_mtx.shape[0]):
+            for y in range(a_mtx.shape[1]):
+                if x != y and abs(a_mtx[mx, my]) < abs(a_mtx[x, y]):
+                    mx, my = x, y
+        return mx, my
+    
+    def maxDiag(self, a_mtx):
+        mx = 0
+        for x in range(a_mtx.shape[0]):
+            mx = max(abs(a_mtx[x, x]), mx)
+        return mx
+    
+    def MethodYakobi(self):
+        a = self.a_mtx.copy()
+        a_new = self.a_mtx.copy()
+        t = 0.1
+        
+        while t >= self.eps:
+            i, j = self.maxNotDiag(a)
+            if abs(a[i, j]) >= t * math.sqrt(self.maxDiag(a)):
+                d = math.sqrt((a[i, i] - a[j, j]) ** 2 + 4 * a[i, j] ** 2)
+                c = math.sqrt(0.5 * (1 + abs(a[i, i] - a[j, j]) / d))
+                s = np.sign(a[i, j] * (a[i, i] - a[j, j])) * math.sqrt(0.5 * (1 - abs(a[i, i] - a[j, j]) / d))
+                
+                a_new[i, j] = a_new[j, i] = 0
+                a_new[i, i] = c**2 * a[i, i] + 2 * c * s * a[i, j] + s**2 * a[j, j]
+                a_new[j, j] = s**2 * a[i, i] - 2 * c * s * a[i, j] + c**2 * a[j, j]
+                for k in range(a.shape[0]):
+                    for l in range(a.shape[1]):
+                        if k != i and k != j and l != i and l != j:
+                            a_new[k, l] = a[k, l]
+                    if k != i and k != j:
+                        a_new[k, i] = a_new[i, k] = c * a[k, i] + s * a[k, j]
+                        a_new[k, j] = a_new[j, k] = -s * a[k, i] + c * a[k, j]
+                a = a_new.copy()
+            else:
+                t *= 0.1
+        return a
+    
+    def execute(self, x0):
+        s = RichardsonMethod.State(self.a_mtx, self.b_vec, x0)
+        start = time.time()
+        
+        J = self.MethodYakobi()
+        alphas = [J[i, i] for i in range(J.shape[0])]
+        alphas.sort()
+        min_alpha = alphas[0]
+        max_alpha = alphas[-1]
+        
+        t0 = 2 / (min_alpha + max_alpha)
+        nu = min_alpha / max_alpha
+        p0 = (1 - nu) / (1 + nu)
+        
+        k = 0
+        while np.linalg.norm(s.errv) >= self.eps and k < self.iter_max:
+            sigma_k = math.cos((2 * k - 1) * math.pi / (2 * self.iter_max))
+            tau_k = t0 / (1 + p0 * sigma_k)
+            x_prev = s.res.copy()
+            update = np.dot(self.a_mtx, s.res) + self.b_vec * tau_k
+            if np.any(np.isnan(update)):
+                print("NaN encountered during update, breaking loop")
+                break
+            s.res += x_prev - update
+            s.iters += 1
+            k += 1
+        
+        s.time = time.time() - start
+        return s
+
+    
+    class State:
+        def __init__(self, a_mtx, b_vec, x0):
+            self.A = a_mtx
+            self.b = b_vec
+            self.res = x0
+            self.iters = 0
+            self.errv = a_mtx @ x0 - b_vec
+            self.err = np.linalg.norm(self.errv)
+            self.time = 0
+
+if __name__ == "__main__":
+    A =  np.array([
+        [ 15.21,  0.0, 1.11],
+        [ 0.0,  14.82,  -0.61],
+        [ 1.11,  -0.61,  15.44]
+    ])
+
+    b =  np.array([9.01, 8.52, 8.33])
+    
+    # Processing
+    state = RichardsonMethod(A, b).execute(np.ones(A.shape[0]))  # Изменили начальное приближение
+    
+    # Result output
+    print("Roots:")
+    print(state.res)
+    print("Iterations:", state.iters)
+    print("Error:", state.err)

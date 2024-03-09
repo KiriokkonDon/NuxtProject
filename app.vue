@@ -1,35 +1,20 @@
 <template>
   <div class="background">
-    <h1 class="title">Hello, world!</h1>
+    <h1 class="title montserrat">Hello World!</h1>
+    <h1 class="title open-sans">Hello World!</h1>
   </div>
 </template>
 
-
-<script>
-console.log("Hello, world!");
-</script>
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital@0;1&family=Open+Sans:ital,wdth@0,75..100;1,75..100&display=swap');
-
 .montserrat {
   font-family: 'Montserrat', sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
 }
 
 .open-sans {
   font-family: 'Open Sans', sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings: 'wdth';
 }
 
 .title {
-  font-family: Montserrat;
   white-space: nowrap;
   overflow: hidden;
   color: transparent;
@@ -82,6 +67,4 @@ console.log("Hello, world!");
     background-position: 200%;
   }
 }
-
-
 </style>
