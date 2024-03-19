@@ -36,19 +36,20 @@ header{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-left: 88px;
-    padding-right: 88px;
-    padding-top: 29px;
-    padding-bottom: 29px;
+    padding: 24px 88px;
 }
 
 .menu{
-  color: #666666;
   margin: 0;
   padding: 0;
   list-style-type: none;
   display: flex;
   gap: 24px;
+}
+
+.menu a{
+  text-decoration: none;
+  color: #666666;
 }
 
 .tel{
@@ -62,6 +63,12 @@ header{
 .header_right_block{
   display: flex;
   gap: 24px;
+}
+
+.header_left_block{
+  display: flex;
+  gap: 80px;
+  align-items: center;
 }
 
 </style>
