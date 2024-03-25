@@ -1,24 +1,45 @@
-<script>
+<script setup lang="ts">
 
+import HouseIcon from 'assets/icons/DarkLogo.svg?skipsvgo'
+
+const nav = [
+  {
+    url: '#',
+    label: 'Реализованные проекты‹'
+  },
+  {
+    url: '#',
+    label: 'Новости'
+  },
+  {
+    url: '#',
+    label: 'Контакты'
+  },
+]
 
 </script>
 
 <template>
   
-  <header>
+  <header class="header">
 
-    <a href="/">
-        <img src="~/assets/image/logo.png" height="40px">
-    </a>
+    <div class="header_left_block">
+      <a href="/">
+        <HouseIcon />
+      </a>
+      <ul class="menu">
+        <li v-for='item in nav'>
+          <a :href='item.url'>
+            {{  item.label }}
+          </a>
+        </li>
+      </ul>
+    </div>
 
-    <ul class="menu">
-      <li>Реализованные проекты</li>
-      <li>Новости</li>
-      <li>Контакты</li>
-    </ul>
+
 
     <div class="header_right_block">
-      <a class="tel" href="tel:89009009090"><img src="~/assets/image/tel.png" height="20px">+7 (900) 900-90-90</a>
+      <a class="tel" href="tel:89009009090"><SvgoPhoneIcon class="Icon" />+7 (900) 900-90-90</a>
       <BaseButton />
     </div>
 

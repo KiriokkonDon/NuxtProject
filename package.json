@@ -10,8 +10,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "nuxt": "^3.10.3",
+    "nuxt-svgo": "^4.0.0",
     "radix-vue": "^1.5.2",
+    "reset-css": "^5.0.2",
     "utility": "^2.1.0",
     "vue": "^3.4.19",
     "vue-router": "^4.3.0"
